@@ -78,7 +78,7 @@ def generateSimulatedData():
     d.to_csv('sample_data.csv', index = False)
 
 
-def kernel_density_nearest_neighbor(filename, col_of_interest = None,  maskOffWater = True, 
+def kernel_density_nearest_neighbor(filename, col_of_interest = None, tif_out = './test.tif', maskOffWater = True, 
                                     NN_neighbors = 20, res = .2, NN_weights = lambda x:np.exp(-(x ** 2) / 3 ** 2),
                                     KD_kernel='gaussian', KD_bandwidth = 3,
                                     min_lat = 0, max_lat = 90, min_lon = -130, max_lon = -65,):
@@ -93,6 +93,9 @@ def kernel_density_nearest_neighbor(filename, col_of_interest = None,  maskOffWa
 
     :param col_of_interest: If not None, function uses this data column to generate NN interpolation
     :type col_of_interest: string
+
+    :param tif_out: Output path for tif file
+    :type tif_out: string
 
     :param maskOffWater: Indicates whether water should be masked from analysis
     :type maskOffWater: Boolean
@@ -179,8 +182,8 @@ def kernel_density_nearest_neighbor(filename, col_of_interest = None,  maskOffWa
     transform = Affine.translation(x[0] - res / 2, y[0] - res / 2) * Affine.scale(res, res)
 
     with rasterio.open(
-        './new.tif',
-        'w',
+        fp=tif_out,
+        mode='w',
         driver='GTiff',
         height=density.shape[0],
         width=density.shape[1],
@@ -194,3 +197,4 @@ if __name__ == '__main__':
     generateSimulatedData()
     filename = 'sample_data.csv'
     kernel_density_nearest_neighbor(filename = 'sample_data.csv')
+ 
